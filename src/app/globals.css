@@ -30,3 +30,14 @@ h2 {
 img {
   padding-top: 2rem;
 }
+
+.configurator {
+  width: 10rem;
+  height: 10rem;
+  background-color: #33bebe;
+}
+
+iframe {
+  width: 70rem;
+  height: 40rem;
+}
