@@ -9,6 +9,49 @@ export default function ConfiguratorPage() {
     let mainWhite = "#fefefe";
     let mainBlack = "#201f1f";
 
+    let equipmentList = [
+      {
+        name: "Horse 1",
+        items: [
+          {
+            name: "Sedlo hnědé",
+            price: 1890,
+            amount: 1,
+          },
+          {
+            name: "Dečka béžová",
+            price: 590,
+            amount: 2,
+          },
+          {
+            name: "Ohlávka",
+            price: 2499,
+            amount: 1,
+          }
+        ]
+      },
+      {
+        name: "Horse 2",
+        items: [
+          {
+            name: "Sedlo hnědé",
+            price: 1890,
+            amount: 1,
+          },
+          {
+            name: "Dečka béžová",
+            price: 590,
+            amount: 2,
+          },
+          {
+            name: "Ohlávka",
+            price: 2499,
+            amount: 1,
+          }
+        ]
+      }
+    ];
+
     const productListWrapper = useRef(null);
     const productHeading = useRef(null);
     const productCategories = useRef(null);
@@ -41,7 +84,21 @@ export default function ConfiguratorPage() {
     const filtersClose = useRef(null);
     const filtersOpen = useRef(null);
 
+    const equipmentOpen = useRef(null);
+    const equipmentModal = useRef(null);
+    const equipmentScroll = useRef(null);
+    const equipmentClose = useRef(null);
+
+    const showFilter1 = useRef(null);
+    const showFilter2 = useRef(null);
+    const showFilter3 = useRef(null);
+    const filterContent1 = useRef(null);
+    const filterContent2 = useRef(null);
+    const filterContent3 = useRef(null);
+
 useEffect(() => {
+
+    // #region Aktuální URL
 
     // Počáteční čtení URL parametrů
     let url = window.location.href;
@@ -50,11 +107,7 @@ useEffect(() => {
     if (params.customization) {
       openCustomization(params.customization);
     }
-
-
-    let mnozstvi = 3;
     
-
     // Tvorba horních selekčních tlačítek
     let typeOptions;
     if (params.type) {
@@ -89,8 +142,10 @@ useEffect(() => {
     }
     radioSelection(selectionButtons, mainBlack);
     selectionButtons.current.children[0].click();
+    // #endregion
 
 
+    // #region Sidebar
     // Tvorba produktových tlačítek
     let productAmount = 9;
     productListWrapper.current.innerHTML = '';
@@ -116,11 +171,11 @@ useEffect(() => {
         for (let j = 0; j < productListWrapper.current.childElementCount; j++) {
           let currentButton = productListWrapper.current.children[j];
           if (j !== i) {
-            currentButton.style.backgroundColor = "#fefefe";
+            currentButton.style.backgroundColor = mainWhite;
             currentButton.src = "assets/icons/icon-tshirt.svg";
 
             currentButton.addEventListener("mouseover", () => {
-                currentButton.style.backgroundColor = "#d6d6d6";
+                currentButton.style.backgroundColor = "#ddd";
             });
             currentButton.addEventListener("mouseout", () => {
                 currentButton.style.backgroundColor = mainWhite;
@@ -142,9 +197,13 @@ useEffect(() => {
         // Vykreslení výběrů
         productHeading.current.textContent = "Sedla";
 
+        
+        let mnozstviKategorii = 3;
+        let mnozstviProduktu = 5;
+
         // Kategorie
         productCategories.current.innerHTML = '';
-        for (let j = 0; j < mnozstvi; j++) {
+        for (let j = 0; j < mnozstviKategorii; j++) {
           let categoryButton = document.createElement("button");
           categoryButton.textContent = "Sedlo " + (j+1);
           productCategories.current.appendChild(categoryButton);
@@ -161,7 +220,7 @@ useEffect(() => {
           productSubcategories.current.style.display = "flex";
 
           productSubcategories.current.innerHTML = '';
-          for (let j = 0; j < mnozstvi; j++) {
+          for (let j = 0; j < mnozstviKategorii; j++) {
             let subcategoryButton = document.createElement("button");
             subcategoryButton.textContent = "Podsedlo " + (j+1);
             productSubcategories.current.appendChild(subcategoryButton);
@@ -179,7 +238,7 @@ useEffect(() => {
           productItems.current.style.display = "flex";
 
           productItems.current.innerHTML = '';
-          for (let j = 0; j < mnozstvi; j++) {
+          for (let j = 0; j < mnozstviProduktu; j++) {
             let productItem = document.createElement("div");
             productItem.appendChild(document.createElement("img"));
             productItem.children[0].src = "assets/images/bila-decka.png";
@@ -204,34 +263,10 @@ useEffect(() => {
     }
     productListWrapper.current.children[0].click();
 
-
-    // Radiový výběr
-    function radioSelection(wrapper, highlightColor) {
-      let items = wrapper.current.childElementCount;
-
-      for (let i = 0; i < items; i++) {
-        let item = wrapper.current.children[i];
-        item.style.backgroundColor = mainWhite;
-
-        item.addEventListener("click", () => {
-          for (let j = 0; j < items; j++) {
-            let currentItem = wrapper.current.children[j];
-
-            if (j !== i) {
-              currentItem.style.backgroundColor = mainWhite;
-              currentItem.style.color = highlightColor;
-            }
-            else {
-              item.style.backgroundColor = highlightColor;
-              item.style.color = mainWhite;
-            }
-          }
-        });
-      }
-    }
+    // #endregion
 
 
-    // Customizační menu
+    // #region Customizace
     customizationButton.current.addEventListener("mouseover", () => {
         customizationButton.current.src = "assets/icons/icon-customize-white.svg";
         customizationButton.current.parentElement.style.backgroundColor = mainBlack;
@@ -287,9 +322,10 @@ useEffect(() => {
     customizationClose.current.onclick = function() {
       closeCustomization();
     }
+    // #endregion
     
 
-    // Filtry
+    // #region Filtry
     filtersOpen.current.addEventListener("mouseover", () => {
       filtersOpen.current.style.backgroundColor = mainBlack;
       filtersOpen.current.style.cursor = "pointer";
@@ -307,8 +343,29 @@ useEffect(() => {
       filtersModal.current.style.display = "none";
     }
 
+    let filterContents = [filterContent1, filterContent2, filterContent3];
+    let filterButtons = [showFilter1, showFilter2, showFilter3];
+    for (let i = 0; i < 3; i++) {
+      filterButtons[i].current.onclick = function() {
+        if (filterContents[i].current.style.display == "block") {
+          filterContents[i].current.style.display = "none";
+          filterButtons[i].current.src = "assets/icons/icon-arrow-right.svg";
+        }
+        else {
+          for (let j = 0; j < 3; j++) {
+            filterContents[j].current.style.display = "none";
+            filterButtons[j].current.src = "assets/icons/icon-arrow-right.svg";
+          }
 
-    // Product options
+          filterContents[i].current.style.display = "block";
+          filterButtons[i].current.src = "assets/icons/icon-arrow-down.svg";
+        }
+      }
+    }
+    // #endregion
+
+
+    // #region Product options
     productOptionsClose.current.onclick = function() {
       productOptions.current.style.display = "none";
     }
@@ -358,7 +415,100 @@ useEffect(() => {
 
       productOptions.current.style.display = "flex";
     }
+    // #endregion
 
+
+    // #region Košíkový seznam
+    equipmentOpen.current.onclick = function() {
+      if (equipmentModal.current.style.display == "flex") {
+        equipmentModal.current.style.display = "none";
+      }
+      else {
+        openEquipmentModal();
+      }
+    }
+
+    equipmentClose.current.onclick = function() {
+      equipmentModal.current.style.display = "none";
+    }
+
+    
+    function openEquipmentModal() {
+      equipmentScroll.current.innerHTML = '';
+
+      for (let i = 0; i < equipmentList.length; i++) {
+        let listItem = document.createElement("div");
+        listItem.appendChild(document.createElement("b"));
+        listItem.children[0].textContent = equipmentList[i].name;
+
+        for (let j = 0; j < equipmentList[i].items.length; j++) {
+
+          if (equipmentList[i].items[j].amount > 0) {
+            let equipmentItem = document.createElement("div");
+            equipmentItem.className = "equipment-item";
+
+            equipmentItem.appendChild(document.createElement("p"));
+            equipmentItem.appendChild(document.createElement("p"));
+            equipmentItem.appendChild(document.createElement("div"));
+
+            equipmentItem.children[0].textContent = equipmentList[i].items[j].name;
+            equipmentItem.children[1].textContent = formatNumber(equipmentList[i].items[j].price) + " Kč";
+            
+            equipmentItem.children[2].appendChild(document.createElement("img"));
+            equipmentItem.children[2].children[0].src = "assets/icons/icon-x.svg";
+            equipmentItem.children[2].children[0].onclick = function() {
+              equipmentList[i].items[j].amount = 0;
+              equipmentItem.style.display = "none";
+              calculateTotalPrice();
+            }
+
+            let counter = document.createElement("div");
+            counter.className = "counter";
+            counter.appendChild(document.createElement("img"));
+            counter.appendChild(document.createElement("p"));
+            counter.appendChild(document.createElement("img"));
+
+            counter.children[1].textContent = equipmentList[i].items[j].amount;
+
+            counter.children[0].src = "assets/icons/icon-minus.svg";
+            counter.children[0].onclick = function() {
+              if (equipmentList[i].items[j].amount > 1) {
+                equipmentList[i].items[j].amount -= 1;
+                counter.children[1].textContent = equipmentList[i].items[j].amount;
+                calculateTotalPrice();
+              }
+            }
+
+            counter.children[2].src = "assets/icons/icon-plus.svg";
+            counter.children[2].onclick = function() {
+              if (equipmentList[i].items[j].amount < 99) {
+                equipmentList[i].items[j].amount += 1;
+                counter.children[1].textContent = equipmentList[i].items[j].amount;
+                calculateTotalPrice();
+              }
+            }
+
+            equipmentItem.children[2].appendChild(counter);
+
+            listItem.appendChild(equipmentItem);
+          }
+        }
+
+        if (listItem.childElementCount > 1) {
+          equipmentScroll.current.appendChild(listItem);
+        }
+      }
+
+      if (equipmentScroll.current.childElementCount == 0) {
+        equipmentScroll.current.textContent = "There are no configured products at the moment.";
+      }
+
+      equipmentModal.current.style.display = "flex";
+    }
+    // #endregion
+
+
+    // #region Obecné funkce
 
     // URL parametry
     function addParameter(parameter, value) {
@@ -373,6 +523,56 @@ useEffect(() => {
       window.history.pushState({}, "", currentUrl);
     }
 
+
+    // Celková cena
+    calculateTotalPrice();
+
+    function calculateTotalPrice() {
+      let total = 0;
+
+      for (let i = 0; i < equipmentList.length; i++) {
+        for (let j = 0; j < equipmentList[i].items.length; j++) {
+          total += (equipmentList[i].items[j].price*equipmentList[i].items[j].amount);
+        }
+      }
+
+      console.log("Celkový součet: " + total);
+      equipmentOpen.current.textContent = "Total: " + formatNumber(total) + " Kč";
+    }
+
+
+    // Radiový výběr
+    function radioSelection(wrapper, highlightColor) {
+      let items = wrapper.current.childElementCount;
+
+      for (let i = 0; i < items; i++) {
+        let item = wrapper.current.children[i];
+        item.style.backgroundColor = mainWhite;
+
+        item.addEventListener("click", () => {
+          for (let j = 0; j < items; j++) {
+            let currentItem = wrapper.current.children[j];
+
+            if (j !== i) {
+              currentItem.style.backgroundColor = mainWhite;
+              currentItem.style.color = highlightColor;
+            }
+            else {
+              item.style.backgroundColor = highlightColor;
+              item.style.color = mainWhite;
+            }
+          }
+        });
+      }
+    }
+
+
+    // Formátování čísel
+    function formatNumber(num) {
+      return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+    }
+    // #endregion
+
 }, []);
     
 return (
@@ -383,6 +583,17 @@ return (
 
   {/* Hlavní konfigurátorové okno */}
 	<div className="item-main">
+
+    {/* Extra mobilní horní linka */}
+    <div className="configurator-top-mobile-line">
+      <div className="mobile-icon-button">
+					<img src="assets/icons/icon-arrow-left-white.svg"></img>
+					<p>Back to store</p>
+				</div>
+        <a>Sign in</a>
+    </div>
+
+    {/* Horní linka - výběr zobrazení, filtry, customizace */}
 		<div className="configurator-top-line">
 			<div className="selection-buttons" ref={selectionButtons}>
 			</div>
@@ -406,17 +617,47 @@ return (
 				</div>
 			</div>
 		</div>
+
+    {/* Spodní linka - přihlášení, seznam produktů, košík */}
 		<div className="configurator-bottom-line">
-			<div className="wrapper-column">
+			<div className="login-wrapper">
 				<a className="login-link">Sign in</a>
 				<div className="icon-button">
 					<img src="assets/icons/icon-arrow-left.svg"></img>
 					<p>Back to store</p>
 				</div>
 			</div>
-			<div>
-				<button className="button-white">Total: 79 €</button>
+			<div className="cart-container">
+				<button ref={equipmentOpen} className="button-white">Total: 79 €</button>
 				<button className="button-black">Add to Cart</button>
+
+        <div ref={equipmentModal} className="equipment-wrapper">
+          <div className="wrapper-between-middle">
+            <h3>Configured Equipment</h3>
+            <img ref={equipmentClose} src="assets/icons/icon-x.svg" className="icon-size-24"></img>
+          </div>
+
+          <div ref={equipmentScroll} className="equipment-scroll">
+            {/*
+            <div>
+              <b>Horse 1:</b>
+              <div className="equipment-item">
+                <p>Jump wadded saddle pad with Makebe logo</p>
+                <p>1 890 Kč</p>
+
+                <div>
+                  <img src="assets/icons/icon-x.svg"></img>
+                  <div className="counter">
+                    <img src="assets/icons/icon-minus.svg"></img>
+                    <p>1</p>
+                    <img src="assets/icons/icon-plus.svg"></img>
+                  </div>
+                </div>
+              </div>
+            </div>
+            */}
+          </div>
+        </div>
 			</div>
 		</div>
 	</div>
@@ -427,12 +668,15 @@ return (
 		</div>
 		<div className="product-selection-wrapper">
 			<p ref={productHeading}>Horní text</p>
+
 			<div ref={productCategories} className="product-category-selection">
 				<button>Sedlo</button>
 			</div>
+
 			<div ref={productSubcategories} className="product-subcategory-selection">
 				<button>Sedlo</button>
 			</div>
+
 			<div ref={productItems} className="product-items-wrapper">
 				<div>
 					<img src="assets/images/bila-decka.png"></img>
@@ -459,7 +703,7 @@ return (
       <div className="options-content">
 
         {/* Levá strana - stále zobrazená - část s konfigurátorem */}
-        <div>
+        <div className="options-content-container">
           <div className="options-configurator">
             <img ref={productOptionsImg} src="assets/images/saddle-brown.png"></img>
           </div>
@@ -480,6 +724,8 @@ return (
         {/* Pravá strana 1 - parametry nastavení */}
         <div ref={productOptionsParameters}>
           <div className="product-options-scroll">
+            <div className="sample-box"></div>
+            <div className="sample-box"></div>
           </div>
           <div className="product-options-buttons">
             <button ref={productOptionsCancel} className="button-white">CANCEL</button>
@@ -527,7 +773,8 @@ return (
 
       <div className="selection-large">
         <h2>Rider Settings:</h2>
-        <div className="filters-scroll">
+        <img ref={showFilter1} src="assets/icons/icon-arrow-right.svg"></img>
+        <div ref={filterContent1} className="filters-scroll">
           <div className="sample-box"></div>
           <div className="sample-box"></div>
           <div className="sample-box"></div>
@@ -536,7 +783,8 @@ return (
       </div>
       <div className="selection-large">
         <h2>Horse Settings:</h2>
-        <div className="filters-scroll">
+        <img ref={showFilter2} src="assets/icons/icon-arrow-right.svg"></img>
+        <div ref={filterContent2} className="filters-scroll">
           <div className="sample-box"></div>
           <div className="sample-box"></div>
           <div className="sample-box"></div>
@@ -545,7 +793,8 @@ return (
       </div>
       <div className="selection-small">
         <h2>Distributor:</h2>
-        <div className="filters-scroll">
+        <img ref={showFilter3} src="assets/icons/icon-arrow-right.svg"></img>
+        <div ref={filterContent3} className="filters-scroll">
           <div className="sample-box"></div>
           <div className="sample-box"></div>
           <div className="sample-box"></div>
@@ -561,7 +810,7 @@ return (
       <div className="top-line">
         <div>
           <p>Customization Mode</p>
-          <img src="assets/icons/icon-customize-white.svg" style={{backgroundColor: "#232222"}}></img>
+          <img src="assets/icons/icon-customize-white.svg"></img>
         </div>
 
         <img ref={customizationClose} src="assets/icons/icon-x.svg"></img>
