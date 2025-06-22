@@ -98,6 +98,23 @@ export default function ConfiguratorPage() {
 
 useEffect(() => {
 
+    // #region MongoDB
+
+    async function fetchProducts() {
+      try {
+        const res = await fetch("/api/products");
+        const data = await res.json();
+        console.log("Načtené produkty:", data);
+      } catch (err) {
+        console.error("Chyba při načítání produktů:", err);
+      }
+    }
+
+    fetchProducts();
+    
+    // #endregion
+
+
     // #region Aktuální URL
 
     // Počáteční čtení URL parametrů
