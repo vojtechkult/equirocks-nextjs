@@ -1,10 +1,14 @@
 "use client";
 
 import React, { forwardRef } from "react";
+import Navbar from "./navbar";
 
 const HomePage = forwardRef(function HomePage(_, ref) {
   return (
     <div className="home-page">
+
+      <Navbar></Navbar>
+
       <video autoPlay muted loop playsInline>
         <source src="assets/videos/home-page-video.mp4" />
       </video>

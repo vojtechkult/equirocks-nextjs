@@ -72,6 +72,7 @@ export default function ConfiguratorPage() {
                 subcategory: "Standard",
                 name: "White saddle Standard",
                 price: "599.90",
+                new: true,
               },
               {
                 subcategory: "Deluxe",
@@ -133,6 +134,8 @@ export default function ConfiguratorPage() {
       }
     ];
 
+    // #region Reference elementů
+
     const productListWrapper = useRef(null);
     const productHeading = useRef(null);
     const productCategories = useRef(null);
@@ -178,6 +181,8 @@ export default function ConfiguratorPage() {
     const filterContent1 = useRef(null);
     const filterContent2 = useRef(null);
     const filterContent3 = useRef(null);
+
+    // #endregion
 
 useEffect(() => {
 
@@ -370,6 +375,12 @@ useEffect(() => {
             productItem.children[1].textContent = currentProducts[j].name;
             productItem.appendChild(document.createElement("b"));
             productItem.children[2].textContent = currentProducts[j].price + " Kč";
+
+            if (currentProducts[j].new) {
+              productItem.appendChild(document.createElement("h5"));
+              productItem.children[3].textContent = "New item";
+            }
+
             productItems.current.appendChild(productItem);
 
             productItem.onclick = function() {

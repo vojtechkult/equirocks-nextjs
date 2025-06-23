@@ -19,7 +19,7 @@ export default function Home() {
   return (
     <div>
       <div ref={homePage}>
-        <HomePage ref={startButton} />
+        <HomePage ref={startButton}/>
       </div>
       <div ref={selectionPage} style={{display: "none"}}>
         <SelectionPage />
