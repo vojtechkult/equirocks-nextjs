@@ -13,7 +13,7 @@
 }
 
 ::selection {
-  background-color: #f2c666; 
+  background-color: #ffe7b3; 
   color: #0D0E0F;          
 }
 
@@ -69,6 +69,9 @@ body {
   box-shadow: -8px 0 20px rgba(0, 0, 0, 0.08);
   position: relative;
   z-index: 20;
+  overflow-x: scroll;
+    scrollbar-width: none;       /* Firefox */
+    -ms-overflow-style: none;    /* IE/Edge */
 }
 
 .product-list-wrapper img {
@@ -331,8 +334,31 @@ body {
   opacity: 80%;
 }
 
+.slider-indicator {
+  background-color: var(--mainBlack);
+  height: 3.2rem;
+  z-index: 500;
+  width: 1.5rem;
+  position: absolute;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.slider-indicator img {
+  background-color: transparent;
+  border: none;
+  height: 1.5rem;
+  width: 1rem;
+  padding-left: 0.2rem;
+}
 
 @media (width > 1000px) {
+  .slider-indicator {
+    display: none;
+  }
+
   .product-selection-wrapper {
     width: calc(100% - 3.75rem); /*calc(100% - 3.75rem)*/
   }
@@ -715,6 +741,31 @@ body {
   margin-bottom: 1rem;
 }
 
+.color-options-wrapper {
+  display: flex;
+  width: 100%;
+  gap: 0.25rem;
+  flex-wrap: wrap;
+  padding-top: 0.5rem;
+  padding-bottom: 1.5rem;
+}
+
+.color-options-wrapper > div {
+  width: 2.86rem;
+  height: 2.2rem;
+  background-color: transparent;
+  border: 1px solid transparent;
+  padding: 0.2rem;
+  cursor: pointer;
+  transition-duration: 200ms;
+}
+
+.color-options-wrapper > div > div {
+  background-color: pink;
+  width: 100%;
+  height: 100%;
+}
+
 
 @media (width > 1000px) {
   .product-options > div {
@@ -885,6 +936,15 @@ body {
 .customization-modal > div:nth-child(1) {
   width: 100%; /*calc(100% - 30rem)*/
   position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.customization-modal > div:nth-child(1) > img {
+  width: 90%;
+  height: 90%;
+  object-fit: contain;
 }
 
 .customization-modal > div:nth-child(2) {
@@ -907,6 +967,7 @@ body {
   width: 100%;
   position: absolute;
   padding: 1.25rem; 
+  top: 0;
   display: flex;
   justify-content: center; /*space-between*/
   height: auto;

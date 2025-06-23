@@ -7,7 +7,7 @@ import Head from 'next/head';
 
 export default function ConfiguratorPage() {
     let mainWhite = "#fefefe";
-    let mainBlack = "#201f1f";
+    let mainBlack = "#201f2f";
 
     let equipmentList = [
       {
@@ -52,6 +52,87 @@ export default function ConfiguratorPage() {
       }
     ];
 
+    let productList = [
+      {
+        product_name: "Saddles",
+        product_icon: {
+          group: "horse",
+          type: "saddle"
+        },
+        categories: [
+          {
+            category_name: "Racing saddles",
+            items: [
+              {
+                subcategory: "Standard",
+                name: "Brown saddle Standard",
+                price: "559.90",
+              },
+              {
+                subcategory: "Standard",
+                name: "White saddle Standard",
+                price: "599.90",
+              },
+              {
+                subcategory: "Deluxe",
+                name: "Brown saddle Deluxe",
+                price: "759.90",
+              },
+              {
+                subcategory: "Deluxe",
+                name: "White saddle Deluxe",
+                price: "799.90",
+              }
+            ],
+          },
+          {
+            category_name: "Jumping saddles",
+            items: [
+              {
+                subcategory: "Jumping",
+                name: "Brown jumping saddle",
+                price: "499.90",
+              },
+              {
+                subcategory: "Jumping",
+                name: "White jumping saddle",
+                price: "499.90",
+              },
+              {
+                subcategory: "Jumping",
+                name: "Black jumping saddle",
+                price: "499.90",
+              }
+            ]
+          },
+        ]
+      },
+      {
+        product_name: "Blankets",
+        product_icon: {
+          group: "horse",
+          type: "blanket"
+        },
+        categories: [
+          {
+            category_name: "Horse blankets",
+            items: [
+              {
+                subcategory: "Standard",
+                name: "Brown blanket",
+                price: "499.90",
+              },
+              {
+                subcategory: "Standard",
+                name: "White blanket",
+                price: "499.90",
+              },
+            ],
+          },
+        ]
+      }
+    ];
+
     const productListWrapper = useRef(null);
     const productHeading = useRef(null);
     const productCategories = useRef(null);
@@ -66,6 +147,7 @@ export default function ConfiguratorPage() {
     const customizationCancel = useRef(null);
     const customizationConfirm = useRef(null);
     const customizationClose = useRef(null);
+    const customizationImage = useRef(null);
 
     const productOptions = useRef(null);
     const productOptionsClose = useRef(null);
@@ -79,6 +161,7 @@ export default function ConfiguratorPage() {
     const productOptionsDetailsClose = useRef(null);
     const productOptionsDetailsOpen = useRef(null);
     const productOptionsBottom = useRef(null);
+    const productOptionsScroll = useRef(null);
 
     const filtersModal = useRef(null);
     const filtersClose = useRef(null);
@@ -110,8 +193,8 @@ useEffect(() => {
       }
     }
 
-    fetchProducts();
-    
+    //fetchProducts();
+
     // #endregion
 
 
@@ -164,18 +247,21 @@ useEffect(() => {
 
     // #region Sidebar
     // Tvorba produktových tlačítek
-    let productAmount = 9;
+    let productAmount = productList.length;
     productListWrapper.current.innerHTML = '';
 
     for (let i = 0; i < productAmount; i++) {
+        let icons = selectIcons(productList[i].product_icon);
+
         let productItem = document.createElement("img");
-        productItem.src = "assets/icons/icon-tshirt.svg";
+        productItem.src = icons[0];
         productListWrapper.current.appendChild(productItem);
     }
 
-
     // Výběr produktů
-    for (let i = 0; i < productListWrapper.current.childElementCount; i++) {
+    for (let i = 0; i < productAmount; i++) {
+      let icons = selectIcons(productList[i].product_icon);
+
       let productButton = productListWrapper.current.children[i];
       productButton.style.backgroundColor = "#fefefe";
 
@@ -185,11 +271,11 @@ useEffect(() => {
         productItems.current.style.display = "none";
 
         // Zvýraznení tlačítek
-        for (let j = 0; j < productListWrapper.current.childElementCount; j++) {
+        for (let j = 0; j < productAmount; j++) {
           let currentButton = productListWrapper.current.children[j];
           if (j !== i) {
             currentButton.style.backgroundColor = mainWhite;
-            currentButton.src = "assets/icons/icon-tshirt.svg";
+            currentButton.src = selectIcons(productList[j].product_icon)[0];
 
             currentButton.addEventListener("mouseover", () => {
                 currentButton.style.backgroundColor = "#ddd";
@@ -200,7 +286,7 @@ useEffect(() => {
           }
           else {
             productButton.style.backgroundColor = mainBlack;
-            currentButton.src = "assets/icons/icon-tshirt-white.svg";
+            currentButton.src = selectIcons(productList[j].product_icon)[1];
 
             productButton.addEventListener("mouseover", () => {
                 currentButton.style.backgroundColor = mainBlack;
@@ -212,32 +298,40 @@ useEffect(() => {
         }
 
         // Vykreslení výběrů
-        productHeading.current.textContent = "Sedla";
+        productHeading.current.textContent = productList[i].product_name;
 
         
-        let mnozstviKategorii = 3;
-        let mnozstviProduktu = 5;
+        let categoryAmount = productList[i].categories.length;
+        let subcategoryAmount = 1;
+
 
         // Kategorie
         productCategories.current.innerHTML = '';
-        for (let j = 0; j < mnozstviKategorii; j++) {
+        let checkedCategories = [];
+
+        for (let j = 0; j < categoryAmount; j++) {
           let categoryButton = document.createElement("button");
-          categoryButton.textContent = "Sedlo " + (j+1);
+          categoryButton.textContent = productList[i].categories[j].category_name;
           productCategories.current.appendChild(categoryButton);
 
+          checkedCategories.push(false);
+
           categoryButton.addEventListener("click", () => {
-            displaySubcategories();
+            checkedCategories[j] = !checkedCategories[j];
+            //displaySubcategories();
+            displayProductItems(i, checkedCategories);
           });
         }
-        radioSelection(productCategories, mainBlack);
+        checkboxSelection(productCategories, mainBlack);
         productCategories.current.children[0].click();
 
-        // Podkategorie
+
+        // Podkategorie - zatím vypuštěno
         function displaySubcategories() {
           productSubcategories.current.style.display = "flex";
 
           productSubcategories.current.innerHTML = '';
-          for (let j = 0; j < mnozstviKategorii; j++) {
+          for (let j = 0; j < subcategoryAmount; j++) {
             let subcategoryButton = document.createElement("button");
             subcategoryButton.textContent = "Podsedlo " + (j+1);
             productSubcategories.current.appendChild(subcategoryButton);
@@ -250,19 +344,32 @@ useEffect(() => {
           productSubcategories.current.children[0].click();
         }
 
+
         // Produktové obrázky
-        function displayProductItems() {
+        function displayProductItems(productOrder, checkedCategories) {
           productItems.current.style.display = "flex";
 
+          let currentProducts = [];
+
+          for (let j = 0; j < checkedCategories.length; j++) {
+            if (checkedCategories[j]) {
+              for (let k = 0; k < productList[productOrder].categories[j].items.length; k++) {
+                currentProducts.push(productList[productOrder].categories[j].items[k]);
+              }
+            }
+          }
+
+          let productsAmount = currentProducts.length;
+
           productItems.current.innerHTML = '';
-          for (let j = 0; j < mnozstviProduktu; j++) {
+          for (let j = 0; j < productsAmount; j++) {
             let productItem = document.createElement("div");
             productItem.appendChild(document.createElement("img"));
             productItem.children[0].src = "assets/images/bila-decka.png";
             productItem.appendChild(document.createElement("p"));
-            productItem.children[1].textContent = "Bílá dečka " + (j+1);
+            productItem.children[1].textContent = currentProducts[j].name;
             productItem.appendChild(document.createElement("b"));
-            productItem.children[2].textContent = "599 Kč";
+            productItem.children[2].textContent = currentProducts[j].price + " Kč";
             productItems.current.appendChild(productItem);
 
             productItem.onclick = function() {
@@ -274,6 +381,10 @@ useEffect(() => {
                 }
               );
             };
+          }
+
+          if (productItems.current.childElementCount == 0) {
+            productItems.current.textContent = "Select a product category."
           }
         }
       }
@@ -304,24 +415,29 @@ useEffect(() => {
 
     function openCustomization(type) {
       let heading = "";
+      let image = "";
       
       switch (type) {
         case "horse":
           heading = "Horse Customization";
+          image = "assets/images/horse-brown.png";
         break;
 
         case "rider":
           heading = "Rider Customization";
+          image = "assets/images/rider-female.png";
         break;
 
         default:
           heading = "Background Customization";
+          image = "assets/images/background-transparent.png";
         break;
       }
 
       addParameter("customization", type);
 
       customizationHeading.current.textContent = heading;
+      customizationImage.current.src = image;
       customizationModal.current.style.display = "flex";
     }
 
@@ -430,7 +546,40 @@ useEffect(() => {
         productOptionsPrice.current.textContent = options.price;
       }
 
+      productOptionsScroll.current.innerHTML = '';
+      createColorSelection("Core color:", ["#E9E8EB", "#D9D3B7", "#DF7250", "#7D3938", "Black", "#574184", "#315C40", "#BF366D", "#5D8695"], productOptionsScroll.current);
+      createColorSelection("Color of edging:", ["#5D8695", "#DF7250", "#D9D3B7"], productOptionsScroll.current);
+
       productOptions.current.style.display = "flex";
+    }
+
+    function createColorSelection(name, colors, source) {
+      let heading = document.createElement("b");
+      heading.textContent = name;
+      source.appendChild(heading);
+
+      let selection = document.createElement("div");
+      selection.className = "color-options-wrapper";
+
+      for (let i = 0; i < colors.length; i++) {
+        let item = document.createElement("div");
+        item.appendChild(document.createElement("div"));
+        item.children[0].style.backgroundColor = colors[i];
+
+        item.addEventListener("click", () => {
+          for (let j = 0; j < colors.length; j++) {
+            if (j !== i) {
+              selection.children[j].style.borderColor = "transparent";
+            }
+            else {
+              selection.children[j].style.borderColor = mainBlack;
+            }
+          }
+        });
+        selection.appendChild(item);
+      }
+      source.appendChild(selection);
+      selection.children[0].click();
     }
     // #endregion
 
@@ -553,7 +702,7 @@ useEffect(() => {
         }
       }
 
-      console.log("Celkový součet: " + total);
+      //console.log("Celkový součet: " + total);
       equipmentOpen.current.textContent = "Total: " + formatNumber(total) + " Kč";
     }
 
@@ -584,9 +733,74 @@ useEffect(() => {
     }
 
 
+    // Checkboxový výběr
+    function checkboxSelection(wrapper, highlightColor) {
+      let items = wrapper.current.childElementCount;
+
+      for (let i = 0; i < items; i++) {
+        let item = wrapper.current.children[i];
+        item.style.backgroundColor = mainWhite;
+
+        item.addEventListener("click", () => {
+          if (item.style.backgroundColor == "rgb(254, 254, 254)") {
+            item.style.backgroundColor = highlightColor;
+            item.style.color = mainWhite;
+          }
+          else {
+            item.style.backgroundColor = mainWhite;
+            item.style.color = highlightColor;
+          }
+        });
+      }
+    }
+
+
     // Formátování čísel
     function formatNumber(num) {
       return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+    }
+
+
+    // Výběr ikonky
+    function selectIcons(icon) {
+
+      let src1 = "";
+      let src2 = "";
+
+      if (icon.group == "horse") {
+        switch (icon.type) {
+          case "saddle":
+            src1 = "sedlo";
+            src2 = "sedlo-black";
+          break;
+
+          case "blanket":
+            src1 = "decka-2";
+            src2 = "decka-2-black";
+          break;
+
+          default:
+            src1 = "uzda";
+            src2 = "uzda-black"
+          break;
+        }
+
+        src1 = "assets/horse-icons/horse-" + src1 + ".svg";
+        src2 = "assets/horse-icons/horse-" + src2 + ".svg";
+      }
+      else {
+        switch (icon.type) {
+          default:
+            src1 = "tricko";
+            src2 = "tricko-black";
+          break;
+        }
+
+        src1 = "assets/rider-icons/rider-" + src1 + ".svg";
+        src2 = "assets/rider-icons/rider-" + src2 + ".svg";
+      }
+
+      return [src1, src2];
     }
     // #endregion
 
@@ -683,6 +897,11 @@ return (
 	<div className="item-sidebar">
 		<div className="product-list-wrapper" ref={productListWrapper}>
 		</div>
+
+    <div className="slider-indicator">
+      <img src="assets/icons/icon-arrow-right-white.svg"></img>
+    </div>
+
 		<div className="product-selection-wrapper">
 			<p ref={productHeading}>Horní text</p>
 
@@ -740,9 +959,8 @@ return (
 
         {/* Pravá strana 1 - parametry nastavení */}
         <div ref={productOptionsParameters}>
-          <div className="product-options-scroll">
-            <div className="sample-box"></div>
-            <div className="sample-box"></div>
+          <div ref={productOptionsScroll} className="product-options-scroll">
+            
           </div>
           <div className="product-options-buttons">
             <button ref={productOptionsCancel} className="button-white">CANCEL</button>
@@ -832,6 +1050,8 @@ return (
 
         <img ref={customizationClose} src="assets/icons/icon-x.svg"></img>
       </div>
+
+      <img ref={customizationImage}></img>
     </div>
 
     <div>
