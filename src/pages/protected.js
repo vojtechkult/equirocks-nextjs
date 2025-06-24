@@ -56,8 +56,8 @@ export default function SecurePage() {
     useEffect(() => {
         fetchProducts();
 
-        logoutButton.current.onclick = function() {
-            logout();
+        logoutButton.current.onclick = async function() {
+            await logout();
             window.location.href = "/login";
         }
     }, []);
