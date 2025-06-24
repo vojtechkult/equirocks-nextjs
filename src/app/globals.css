@@ -1232,6 +1232,81 @@ body {
 /* #endregion */
 
 
+/* #region Ostatní stránka */
+
+.page-wrapper {
+  display: flex;
+  width: 100%;
+  height: 100dvh;
+  overflow-y: auto;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--mainWhite);
+  padding: 1rem;
+}
+
+.login-wrapper {
+  width: 100%;
+  padding: 1rem;
+  padding-block: 2rem;
+  max-width: 31rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: 2px solid #efefef;
+}
+
+.login-wrapper input {
+  width: 100%;
+  padding: 0.5rem;
+  font-size: 1rem;
+  border-radius: 0;
+  border: 1px solid var(--mainBlack);
+}
+
+.login-wrapper input:focus {
+  outline: none;
+  background-color: #fffbf1;
+}
+
+.login-wrapper button {
+  width: 100%;
+  background-color: #ffe7b3;
+  border: 0;
+  padding: 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  transition-duration: 200ms;
+  margin-top: 1.5rem;
+}
+
+.login-wrapper h2 {
+  padding-bottom: 1.5rem;
+  text-align: center;
+  font-size: 1.5rem;
+}
+
+.login-wrapper button:hover {
+  background-color: #ffeec8;
+}
+
+.login-wrapper p {
+  background-color: #ffc3c3;
+  width: 100%;
+  margin-top: 1.5rem;
+  padding: 1rem;
+  text-align: center;
+  font-weight: 600;
+  display: none;
+}
+
+@media (width > 31rem) {
+  .login-wrapper {
+    padding: 3rem;
+  }
+}
+
+/* #endregion */
 
 
 /* #region FONT SIZES */
