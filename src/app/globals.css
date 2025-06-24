@@ -150,6 +150,8 @@ body {
 .product-items-wrapper img {
   width: 100%;
   margin-bottom: 0.62rem;
+  height: 5.3rem;
+  object-fit: contain;
 }
 
 .product-items-wrapper p {
@@ -168,7 +170,7 @@ body {
   padding-block: 0.15rem;
   font-weight: 400;
   position: absolute;
-  bottom: calc(7.5dvh);
+  top: 4.5rem;
   width: calc(100% - 6px);
 }
 

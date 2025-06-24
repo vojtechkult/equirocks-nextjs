@@ -191,6 +191,10 @@ useEffect(() => {
     async function fetchProducts() {
       try {
         const res = await fetch("/api/products");
+        if (res.status === 401) {
+          console.log("Chyba - nepřihlášený uživatel.");
+          return;
+        }
         const data = await res.json();
         console.log("Načtené produkty:", data);
       } catch (err) {
@@ -198,7 +202,7 @@ useEffect(() => {
       }
     }
 
-    //fetchProducts();
+    fetchProducts();
 
     // #endregion
 
@@ -863,7 +867,7 @@ return (
     {/* Spodní linka - přihlášení, seznam produktů, košík */}
 		<div className="configurator-bottom-line">
 			<div className="login-wrapper">
-				<a className="login-link">Sign in</a>
+				<a className="login-link" href="./login">Sign in</a>
 				<div className="icon-button">
 					<img src="assets/icons/icon-arrow-left.svg"></img>
 					<p>Back to store</p>
