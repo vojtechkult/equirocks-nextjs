@@ -866,7 +866,7 @@ return (
 
     {/* Spodní linka - přihlášení, seznam produktů, košík */}
 		<div className="configurator-bottom-line">
-			<div className="login-wrapper">
+			<div className="signin-wrapper">
 				<a className="login-link" href="./login">Sign in</a>
 				<div className="icon-button">
 					<img src="assets/icons/icon-arrow-left.svg"></img>
