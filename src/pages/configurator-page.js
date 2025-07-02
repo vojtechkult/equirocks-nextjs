@@ -3,12 +3,14 @@ import '../app/globals.css';
 
 import { useEffect, useState, useRef } from "react";
 import Head from 'next/head';
+import {allProducts} from "../products.js";
 
 
 export default function ConfiguratorPage() {
     let mainWhite = "#fefefe";
     let mainBlack = "#201f2f";
 
+    /*
     let equipmentList = [
       {
         name: "Horse 1",
@@ -50,9 +52,14 @@ export default function ConfiguratorPage() {
           }
         ]
       }
-    ];
+    ];*/
 
-    let productList = [
+    let equipmentList = [];
+
+    // console.log(allProducts);
+
+    let productList = allProducts;
+    /*[
       {
         product_name: "Saddles",
         product_icon: {
@@ -132,9 +139,10 @@ export default function ConfiguratorPage() {
           },
         ]
       }
-    ];
+    ];*/
 
     // #region Reference elementů
+    const configurator = useRef(null);
 
     const productListWrapper = useRef(null);
     const productHeading = useRef(null);
@@ -202,7 +210,7 @@ useEffect(() => {
       }
     }
 
-    fetchProducts();
+    //fetchProducts();
 
     // #endregion
 
@@ -374,7 +382,7 @@ useEffect(() => {
           for (let j = 0; j < productsAmount; j++) {
             let productItem = document.createElement("div");
             productItem.appendChild(document.createElement("img"));
-            productItem.children[0].src = "assets/images/bila-decka.png";
+            productItem.children[0].src = "assets/products/" + currentProducts[j].image;
             productItem.appendChild(document.createElement("p"));
             productItem.children[1].textContent = currentProducts[j].name;
             productItem.appendChild(document.createElement("b"));
@@ -392,7 +400,11 @@ useEffect(() => {
                 {
                   name: productItem.children[1].textContent,
                   img: productItem.children[0].src,
-                  price: productItem.children[2].textContent
+                  price: productItem.children[2].textContent,
+                  display: currentProducts[j].display,
+                  remove: currentProducts[j].remove,
+                  options: currentProducts[j].options,
+                  product: currentProducts[j],
                 }
               );
             };
@@ -514,15 +526,6 @@ useEffect(() => {
 
 
     // #region Product options
-    productOptionsClose.current.onclick = function() {
-      productOptions.current.style.display = "none";
-    }
-    productOptionsCancel.current.onclick = function() {
-      productOptions.current.style.display = "none";
-    }
-    productOptionsConfirm.current.onclick = function() {
-      productOptions.current.style.display = "none";
-    }
 
     productOptionsDetailsOpen.current.onclick = function() {
       openProductDetails();
@@ -561,14 +564,99 @@ useEffect(() => {
         productOptionsPrice.current.textContent = options.price;
       }
 
+      // Prvotní zobrazení produktu
+      if (!options.display) {
+        options.display = ["-", {}];
+        console.log('Pozor! Tento produkt nemá definovaný "display".');
+      }
+      console.log("updateConfiguration(" + options.display[0] + ", " + JSON.stringify(options.display[1]) + ")");
+
+
+      // Zavření produktového okna
+      if (!options.remove) {
+        options.remove = ["-", {}];
+        console.log('Pozor! Tento produkt nemá definovaný "remove".');
+      }
+      productOptionsClose.current.onclick = function() {
+        console.log("updateConfiguration(" + options.remove[0] + ", " + JSON.stringify(options.remove[1]) + ")");
+        productOptions.current.style.display = "none";
+      }
+      productOptionsCancel.current.onclick = function() {
+        console.log("updateConfiguration(" + options.remove[0] + ", " + JSON.stringify(options.remove[1]) + ")");
+        productOptions.current.style.display = "none";
+        options.product.equipped = false;
+        console.log("Equipped: False");
+        updateCart();
+      }
+      productOptionsConfirm.current.onclick = function() {
+        productOptions.current.style.display = "none";
+        options.product.equipped = true;
+        console.log("Equipped: True");
+        updateCart();
+      }
+
+
+      // Vyvoření všech výběrových sekcí
       productOptionsScroll.current.innerHTML = '';
-      createColorSelection("Core color:", ["#E9E8EB", "#D9D3B7", "#DF7250", "#7D3938", "Black", "#574184", "#315C40", "#BF366D", "#5D8695"], productOptionsScroll.current);
-      createColorSelection("Color of edging:", ["#5D8695", "#DF7250", "#D9D3B7"], productOptionsScroll.current);
+
+      if (!options.options) {
+        options.options = [];
+        console.log('Pozor! Tento produkt nemá definované "options".');
+      }
+      for (let i = 0; i < options.options.length; i++) {
+        // Objekt výběru
+        let option = options.options[i];
+
+        if (!option.type) {
+          option.type = "-";
+          console.log('Pozor! Tento produkt nemá definovaný "options > type".');
+        }
+        if (!option.name) {
+          option.name = "-";
+          console.log('Pozor! Tento produkt nemá definovaný "options > name".');
+        }
+        if (!option.key) {
+          option.key = "-";
+          console.log('Pozor! Tento produkt nemá definovaný "options > key".');
+        }
+
+
+        // Všechny akce daného výběru
+        let actions = [];
+        for (let j = 0; j < option.options.length; j++) {
+          if (!option.options[j].value) {
+            option.options[j].value = "-";
+            console.log('Pozor! Tento produkt nemá definovaný "options > options > value".');
+          }
+          actions.push([option.key, option.options[j].value]);
+        }
+
+        // Jednotlivé typy sekcí
+        if (option.type == "color") {
+          let colorList = [];
+          for (let j = 0; j < option.options.length; j++) {
+            colorList.push(option.options[j].color);
+          }
+
+          if (!option.default_color) {
+            console.log(option);
+            option.default_color = "-";
+          }
+
+          createColorSelection(option.name + ":", colorList, productOptionsScroll.current, actions, option.chosen_color, option);
+        }
+      }
+
+      //createColorSelection("Color of edging:", ["#5D8695", "#DF7250", "#D9D3B7"], productOptionsScroll.current);
 
       productOptions.current.style.display = "flex";
     }
 
-    function createColorSelection(name, colors, source) {
+
+    // Barevný výběr
+    function createColorSelection(name, colors, source, actions, chosenColor, option) {
+      //console.log("Vytvářím barevný výběr:", name, colors, source);
+
       let heading = document.createElement("b");
       heading.textContent = name;
       source.appendChild(heading);
@@ -582,6 +670,10 @@ useEffect(() => {
         item.children[0].style.backgroundColor = colors[i];
 
         item.addEventListener("click", () => {
+          console.log("updateConfiguration(" + actions[i][0] + ", " + JSON.stringify(actions[i][1]) + ")");
+
+          option.chosen_color = colors[i];
+
           for (let j = 0; j < colors.length; j++) {
             if (j !== i) {
               selection.children[j].style.borderColor = "transparent";
@@ -594,7 +686,15 @@ useEffect(() => {
         selection.appendChild(item);
       }
       source.appendChild(selection);
-      selection.children[0].click();
+
+      //console.log("Vybraná barva:", chosenColor);
+
+      if (!chosenColor || colors.indexOf(chosenColor) == -1) {
+        selection.children[0].click();
+      }
+      else {
+        selection.children[colors.indexOf(chosenColor)].click();
+      }
     }
     // #endregion
 
@@ -614,6 +714,29 @@ useEffect(() => {
     }
 
     
+    function updateCart() {
+      console.log(productList);
+      equipmentList = [{name: "Group 1", items: []}];
+
+      for (let i = 0; i < productList.length; i++) {
+        for (let j = 0; j < productList[i].categories.length; j++) {
+          for (let k = 0; k < productList[i].categories[j].items.length; k++) {
+            let currentItem = productList[i].categories[j].items[k];
+            if (currentItem.equipped) {
+              equipmentList[0].items.push({
+                name: currentItem.name,
+                price: currentItem.price,
+                amount: 1,
+              })
+            }
+          }
+        }
+      }
+
+      calculateTotalPrice();
+    }
+
+
     function openEquipmentModal() {
       equipmentScroll.current.innerHTML = '';
 
@@ -718,7 +841,7 @@ useEffect(() => {
       }
 
       //console.log("Celkový součet: " + total);
-      equipmentOpen.current.textContent = "Total: " + formatNumber(total) + " Kč";
+      equipmentOpen.current.textContent = "Total: " + formatNumber(Math.round(total)) + " Kč";
     }
 
 
@@ -789,9 +912,24 @@ useEffect(() => {
             src2 = "sedlo-black";
           break;
 
-          case "blanket":
+          case "pad":
             src1 = "decka-2";
             src2 = "decka-2-black";
+          break;
+
+          case "blanket":
+            src1 = "decka";
+            src2 = "decka-black";
+          break;
+
+          case "bonnet":
+            src1 = "cabraka";
+            src2 = "cabraka-black";
+          break;
+
+          case "front_legs":
+            src1 = "ochrana";
+            src2 = "ochrana-black";
           break;
 
           default:
@@ -819,6 +957,9 @@ useEffect(() => {
     }
     // #endregion
 
+
+    // #region Konfigurátor
+    // #endregion
 }, []);
     
 return (
@@ -906,7 +1047,11 @@ return (
         </div>
 			</div>
 		</div>
-	</div>
+    
+    {/*
+    <iframe ref={configurator} src="https://1529606975.cdn.precismo.tech/b3433b55237cfdbee9cc/1/objects/20000505/mock/api.html"></iframe>
+	  */}
+  </div>
 
   {/* Sidebar */}
 	<div className="item-sidebar">

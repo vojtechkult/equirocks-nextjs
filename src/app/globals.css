@@ -31,6 +31,13 @@ body {
 
 
 /* #region Configurator */
+iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  margin-bottom: -4px;
+}
+
 .configurator-step {
   width: 100%;
   height: 100dvh;
@@ -1232,7 +1239,7 @@ body {
 /* #endregion */
 
 
-/* #region Ostatní stránka */
+/* #region Login stránka */
 
 .page-wrapper {
   display: flex;
