@@ -78,6 +78,20 @@ export const allProducts = [
                                         color: "#242431",
                                     },
                                 ]
+                            },
+                            {
+                                name: "Logo",
+                                type: "radio",
+                                options: [
+                                    {
+                                        text: "No logo",
+                                        value: ["blanket_logo_hide", {}]
+                                    },
+                                    {
+                                        text: "Brand logo",
+                                        value: ["blanket_logo_show", {logo_id: "mkb"}]
+                                    }
+                                ]
                             }
                         ]
                     }
@@ -161,6 +175,20 @@ export const allProducts = [
                                         value: {color_id: "beige"},
                                         color: "#f0c57f",
                                     },
+                                ]
+                            },
+                            {
+                                name: "Logo",
+                                type: "radio",
+                                options: [
+                                    {
+                                        text: "No logo",
+                                        value: ["pad_logo_hide", {}]
+                                    },
+                                    {
+                                        text: "Brand logo",
+                                        value: ["pad_logo", {logo_id: "mkb"}]
+                                    }
                                 ]
                             }
                         ]

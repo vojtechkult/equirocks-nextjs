@@ -363,7 +363,7 @@ iframe {
 .slider-indicator {
   background-color: var(--mainBlack);
   height: 3.2rem;
-  z-index: 500;
+  z-index: 100;
   width: 1.5rem;
   position: absolute;
   right: 0;
@@ -654,22 +654,37 @@ iframe {
 }
 
 .options-content {
-  height: 100%;
+  height: calc(100dvh - 3rem);
   padding: 1.25rem;
   gap: 1.25rem;
   display: flex;
   flex-direction: column; /*row*/
 }
 
-.options-content > div {
-  height: 100%;
-}
-
 .options-content > div:nth-child(1) {
   width: 100%; /*60%*/
   display: flex;
   flex-direction: column;
-  height: 34%; /*auto*/
+  height: auto; /*auto*/
+  height: calc(50dvh - 3rem);
+  overflow: auto;
+  padding-bottom: 0;
+}
+
+.options-content > div:nth-child(2), .options-content > div:nth-child(3) {
+  width: 100%; /*40%*/
+  height: calc(50dvh - 2rem); /*auto*/
+  display: flex;
+  flex-direction: column;
+  gap: 1rem; /*0rem*/
+  padding: 0rem 1.25rem 0.5rem 1.25rem;
+  position: absolute; /*auto*/
+  bottom: 0;
+  left: 0;
+}
+
+.options-content > div:nth-child(3) {
+  display: none;
 }
 
 .icon-size-24 {
@@ -684,10 +699,10 @@ iframe {
 }
 
 .options-configurator {
-  height: 100%;
   border: 1px solid var(--mainBlack);
   margin-bottom: 1rem;
   background-color: var(--mainWhite);
+  height: calc(100% - 6rem);
 }
 
 .options-configurator img {
@@ -703,7 +718,7 @@ iframe {
   font-weight: 600;
   color: var(--mainWhite);
   border: none;
-  margin-block: 1rem;
+  margin-top: 1rem;
 }
 
 .options-configurator-description h2 {
@@ -734,19 +749,6 @@ iframe {
   align-items: end;
 }
 
-.options-content > div:nth-child(2), .options-content > div:nth-child(3) {
-  width: 100%; /*40%*/
-  height: 50%; /*auto*/
-  display: flex;
-  flex-direction: column;
-  gap: 1rem; /*0rem*/
-  padding: 0rem 1.25rem 1.25rem 1.25rem;
-  position: absolute; /*auto*/
-  bottom: 0;
-  left: 0;
-  margin-top: 4.8rem;
-}
-
 .options-content .button-white, .options-content .button-black {
   width: 100%; /*auto*/
 }
@@ -755,18 +757,16 @@ iframe {
   display: none;
 }
 
-.options-content > div:nth-child(3) {
-  display: none;
-}
+
 
 .product-options-scroll {
-  height: calc(100dvh - 13rem);
+  height: 100%;
   overflow-y: scroll;
   padding-right: 1rem;
 }
 
 .product-details-scroll {
-  height: calc(100dvh - 13rem);
+  height: 100%;
   margin-top: 1rem;
   overflow-y: scroll;
   padding-right: 1rem;
@@ -795,10 +795,34 @@ iframe {
 }
 
 .product-options-buttons {
-  height: 6rem;
+  height: 3rem;
   display: flex;
   gap: 0.62rem;
   align-items: end;
+  width: 100%;
+}
+
+.product-options-buttons button {
+  height: 100%;
+  width: 100%;
+  font-size: 1rem;
+  font-weight: 800;
+  border: 1px solid var(--mainBlack);
+  background-color: var(--mainWhite);
+  transition-duration: 200ms;
+}
+
+.product-options-buttons button:hover {
+  opacity: 80%;
+}
+
+.product-options-buttons button:nth-child(1):hover {
+  background-color: #ddd;
+}
+
+.product-options-buttons button:nth-child(2) {
+  background-color: var(--mainBlack);
+  color: var(--mainWhite);
 }
 
 .sample-box {
@@ -807,13 +831,15 @@ iframe {
   margin-bottom: 1rem;
 }
 
-.color-options-wrapper {
+.color-options-wrapper, .radio-options-wrapper {
   display: flex;
   width: 100%;
   gap: 0.25rem;
   flex-wrap: wrap;
   padding-top: 0.5rem;
-  padding-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  margin-bottom: 1.25rem;
+  border-bottom: 2px solid #f5f5f5;
 }
 
 .color-options-wrapper > div {
@@ -832,8 +858,33 @@ iframe {
   height: 100%;
 }
 
+.radio-options-wrapper {
+  gap: 0.5rem;
+}
+
+.radio-options-wrapper button {
+  padding: 0.44rem 0.88rem 0.44rem 0.88rem;
+  border: 1px solid var(--mainBlack);
+  font-size: 0.75rem;
+  font-weight: 600;
+  transition-duration: 200ms;
+}
+
 
 @media (width > 1000px) {
+  .options-configurator-description button {
+    margin-bottom: 1rem;
+  }
+  .options-configurator {
+    height: 100%;
+  }
+  .options-content {
+    height: 100%;
+  }
+  .product-options-scroll, .product-details-scroll {
+    height: calc(100dvh - 11.5rem);
+    margin-bottom: 1.25rem;
+  }
   .product-options > div {
     max-width: 55rem; /*55rem*/
   }
@@ -855,6 +906,9 @@ iframe {
     gap: 0rem; /*0rem*/
     position: static; /*auto*/
     margin-top: 0rem;
+  }
+  .options-content > div:nth-child(3) {
+    height: calc(100dvh - 6rem);
   }
   .options-content .button-white, .options-content .button-black {
     width: auto; /*auto*/

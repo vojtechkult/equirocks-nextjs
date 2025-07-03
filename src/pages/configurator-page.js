@@ -615,24 +615,25 @@ useEffect(() => {
           option.name = "-";
           console.log('Pozor! Tento produkt nemá definovaný "options > name".');
         }
-        if (!option.key) {
-          option.key = "-";
-          console.log('Pozor! Tento produkt nemá definovaný "options > key".');
-        }
-
-
-        // Všechny akce daného výběru
-        let actions = [];
-        for (let j = 0; j < option.options.length; j++) {
-          if (!option.options[j].value) {
-            option.options[j].value = "-";
-            console.log('Pozor! Tento produkt nemá definovaný "options > options > value".');
-          }
-          actions.push([option.key, option.options[j].value]);
-        }
+        
 
         // Jednotlivé typy sekcí
         if (option.type == "color") {
+          if (!option.key) {
+            option.key = "-";
+            console.log('Pozor! Tento produkt nemá definovaný "options > key".');
+          }
+
+          // Všechny akce daného výběru
+          let actions = [];
+          for (let j = 0; j < option.options.length; j++) {
+            if (!option.options[j].value) {
+              option.options[j].value = "-";
+              console.log('Pozor! Tento produkt nemá definovaný "options > options > value".');
+            }
+            actions.push([option.key, option.options[j].value]);
+          }
+
           let colorList = [];
           for (let j = 0; j < option.options.length; j++) {
             colorList.push(option.options[j].color);
@@ -644,6 +645,9 @@ useEffect(() => {
           }
 
           createColorSelection(option.name + ":", colorList, productOptionsScroll.current, actions, option.chosen_color, option);
+        }
+        else if (option.type == "radio") {
+          createRadioSelection(option, productOptionsScroll.current);
         }
       }
 
@@ -696,6 +700,50 @@ useEffect(() => {
         selection.children[colors.indexOf(chosenColor)].click();
       }
     }
+
+
+    // Radio výběr
+    function createRadioSelection(option, source) {
+
+      let heading = document.createElement("b");
+      heading.textContent = option.name + ":";
+      source.appendChild(heading);
+
+      let selection = document.createElement("div");
+      selection.className = "radio-options-wrapper";
+
+      for (let i = 0; i < option.options.length; i++) {
+        let button = document.createElement("button");
+        button.textContent = option.options[i].text;
+
+        button.addEventListener("click", () => {
+          for (let j = 0; j < selection.childElementCount; j++) {
+            if (i !== j) {
+              selection.children[j].style.backgroundColor = mainWhite;
+              selection.children[j].style.color = mainBlack;
+            }
+            else {
+              selection.children[j].style.backgroundColor = mainBlack;
+              selection.children[j].style.color = mainWhite;
+            }
+          }
+
+          option.chosen_button = i;
+          console.log("updateConfiguration(" + option.options[i].value[0] + ", " + JSON.stringify(option.options[i].value[1]) + ")");
+        });
+
+        selection.appendChild(button);
+      }
+
+      if (option.chosen_button > -1) {
+        selection.children[option.chosen_button].click();
+      }
+      else {
+        selection.children[0].click();
+      }
+
+      source.appendChild(selection);
+    }
     // #endregion
 
 
@@ -727,6 +775,7 @@ useEffect(() => {
                 name: currentItem.name,
                 price: currentItem.price,
                 amount: 1,
+                item: currentItem
               })
             }
           }
@@ -762,6 +811,7 @@ useEffect(() => {
             equipmentItem.children[2].children[0].src = "assets/icons/icon-x.svg";
             equipmentItem.children[2].children[0].onclick = function() {
               equipmentList[i].items[j].amount = 0;
+              equipmentList[i].items[j].item.equipped = false;
               equipmentItem.style.display = "none";
               calculateTotalPrice();
             }
@@ -1123,8 +1173,8 @@ return (
             
           </div>
           <div className="product-options-buttons">
-            <button ref={productOptionsCancel} className="button-white">CANCEL</button>
-            <button ref={productOptionsConfirm} className="button-black">CONFIRM</button>
+            <button ref={productOptionsCancel}>CANCEL</button>
+            <button ref={productOptionsConfirm}>CONFIRM</button>
           </div>
         </div>
 
